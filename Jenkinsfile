@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "hello"  // local image name
-        ECR_REPO  = "992382545251.dkr.ecr.us-east-1.amazonaws.com/anna" // ECR repo
+        ECR_REPO  = "992382545251.dkr.ecr.us-east-1.amazonaws.com/hello" // correct ECR repo
         REGION    = "us-east-1"
     }
 
@@ -24,7 +24,7 @@ pipeline {
             steps {
                 // Optional: run your Flask app or unit tests inside the container
                 // sh "docker run --rm ${IMAGE_NAME} pytest"
-		echo "Skipping tests for now"
+                echo "Skipping tests for now"
             }
         }
 
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: '992382545251'  // <-- your Jenkins AWS credentials ID
+                    credentialsId: '992382545251'  // your Jenkins AWS credentials ID
                 ]]) {
                     sh """
                         echo "Logging in to ECR..."
@@ -42,11 +42,17 @@ pipeline {
                         echo "Tagging Docker image..."
                         docker tag ${IMAGE_NAME}:latest ${ECR_REPO}:latest
 
-                        echo "Pushing Docker image..."
+                        echo "Pushing Docker image to ECR..."
                         docker push ${ECR_REPO}:latest
                     """
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline finished"
         }
     }
 }
