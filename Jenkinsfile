@@ -24,6 +24,7 @@ pipeline {
             steps {
                 // Optional: run your Flask app or unit tests inside the container
                 // sh "docker run --rm ${IMAGE_NAME} pytest"
+		echo "Skipping tests for now"
             }
         }
 
